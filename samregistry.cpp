@@ -6,8 +6,15 @@ SamRegistry::SamRegistry(QObject *parent)
 
 }
 
-void SamRegistry::setIsSamModifying(bool isSamModifying)
+void SamRegistry::registerSamPosition(const QGeoCoordinate &coordinate)
 {
-    mIsSamModifying = isSamModifying;
-    emit isSamModifyingChanged();
+    mSamPosition = coordinate;
+
+    mIsSamRegistered = true;
+    emit isSamRegisteredChanged();
+}
+
+void SamRegistry::changeSamPosition(const QGeoCoordinate &coordinate)
+{
+    mSamPosition = coordinate;
 }

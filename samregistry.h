@@ -2,25 +2,29 @@
 #define SAMREGISTRY_H
 
 #include <QObject>
+#include <QGeoCoordinate>
 
 class SamRegistry : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(bool isSamModifying READ isSamModifying WRITE setIsSamModifying
-               NOTIFY isSamModifyingChanged)
+    Q_PROPERTY(bool isSamRegistered READ isSamRegistered NOTIFY isSamRegisteredChanged)
 
 public:
     explicit SamRegistry(QObject *parent = nullptr);
 
-    bool isSamModifying() const { return mIsSamModifying; }
-    void setIsSamModifying(bool isSamModifying);
+    Q_INVOKABLE void registerSamPosition(const QGeoCoordinate &coordinate);
+    Q_INVOKABLE void changeSamPosition(const QGeoCoordinate &coordinate);
+
+    bool isSamRegistered() const { return mIsSamRegistered; }
 
 signals:
-    void isSamModifyingChanged();
+    void isSamRegisteredChanged();
+    void samAtMapCenterAdded();
 
 private:
-    bool mIsSamModifying = false;
+    bool mIsSamRegistered = false;
+    QGeoCoordinate mSamPosition;
 };
 
 #endif // SAMREGISTRY_H

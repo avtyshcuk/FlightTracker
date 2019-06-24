@@ -13,21 +13,26 @@ ApplicationWindow {
     height: width
     title: qsTr("Flight Tracker")
 
-    header: AppToolBar { }
+    header: AppToolBar { id: toolBar }
 
     Map {
         id: map
         anchors.fill: parent
         plugin: Plugin { name: "osm" }
         center: QtPositioning.coordinate(50.45, 30.52)
-        gesture.enabled: !samRegistry.isSamModifying
         maximumZoomLevel: 10
         minimumZoomLevel: 5
         zoomLevel: 7
 
-        MapMouseArea {
-            id: mapMouseArea
-            map: map
+        Connections {
+            target: toolBar
+            onSamAdded: {
+                var params = { "coordinate": map.center };
+                var component = Qt.createComponent("GeoSam.qml");
+                var geoSam = component.createObject(map, params);
+                map.addMapItem(geoSam);
+                samRegistry.registerSamPosition(map.center);
+            }
         }
     }
 }

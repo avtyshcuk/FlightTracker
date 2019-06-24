@@ -5,7 +5,6 @@
         <file>fonts/aerialattackfont.ttf</file>
         <file>main.cpp</file>
         <file>qtquickcontrols2.conf</file>
-        <file>MapMouseArea.qml</file>
         <file>GeoSam.qml</file>
     </qresource>
 </RCC>

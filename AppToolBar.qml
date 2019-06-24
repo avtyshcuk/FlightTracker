@@ -5,6 +5,8 @@ ToolBar {
     id: root
     leftPadding: 8
 
+    signal samAdded;
+
     FontLoader {
         id: myCustomFont
         source: "qrc:/fonts/aerialattackfont.ttf"
@@ -21,8 +23,9 @@ ToolBar {
                 id: addSamButton
                 text: internal.addSamIcon
                 font.family: myCustomFont.name
+                visible: !samRegistry.isSamRegistered
                 onClicked: {
-                    samRegistry.isSamModifying = true;
+                    samAdded();
                 }
             }
         }

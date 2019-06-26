@@ -21,9 +21,22 @@ ApplicationWindow {
         anchors.fill: parent
         plugin: Plugin { name: "osm" }
         center: QtPositioning.coordinate(50.45, 30.52)
+        gesture.enabled: !beamSimulator.isActive
         maximumZoomLevel: 10
         minimumZoomLevel: 5
         zoomLevel: 7
+
+        BeamPositionItem {
+            anchors.fill: parent
+            visible: beamSimulator.isActive
+
+            property var samPos: samRegistry.samPosition
+            // Assume our radar has 250 km detection range
+            property var beamPos: samPos.atDistanceAndAzimuth(250000, beamSimulator.angle)
+
+            startPoint: map.fromCoordinate(samPos, false)
+            endPoint: map.fromCoordinate(beamPos, false)
+        }
 
         Component.onCompleted: {
             Utils.initSam(map);

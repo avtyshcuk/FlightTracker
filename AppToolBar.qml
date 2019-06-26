@@ -24,7 +24,11 @@ ToolBar {
                 text: internal.startStopIcon
                 font.family: myCustomFont.name
                 onClicked: {
-
+                    if (beamSimulator.isActive) {
+                        beamSimulator.stop();
+                    } else {
+                        beamSimulator.start();
+                    }
                 }
             }
         }
@@ -33,6 +37,7 @@ ToolBar {
     QtObject {
         id: internal
 
-        readonly property string startStopIcon: "\uE807"
+        readonly property string startStopIcon: beamSimulator.isActive ?
+                                                    "\uE802" : "\uE801"
     }
 }

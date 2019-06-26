@@ -15,7 +15,9 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
     samitem.cpp \
-    samregistry.cpp
+    samregistry.cpp \
+    beampositionitem.cpp \
+    beamsimulator.cpp
 
 RESOURCES += qml.qrc
 
@@ -32,4 +34,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     samitem.h \
-    samregistry.h
+    samregistry.h \
+    beampositionitem.h \
+    beamsimulator.h

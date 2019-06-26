@@ -18,6 +18,7 @@ MapQuickItem {
 
     MouseArea {
         anchors.fill: parent
+        visible: !beamSimulator.isActive
         drag.target: parent
 
         onReleased: {

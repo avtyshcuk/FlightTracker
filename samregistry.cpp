@@ -8,5 +8,8 @@ SamRegistry::SamRegistry(QObject *parent)
 
 void SamRegistry::setSamPosition(const QGeoCoordinate &coordinate)
 {
-    mSamPosition = coordinate;
+    if (coordinate != mSamPosition) {
+        mSamPosition = coordinate;
+        emit samPositionChanged();
+    }
 }

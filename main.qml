@@ -5,6 +5,7 @@ import QtLocation 5.9
 import QtPositioning 5.6
 
 import Tracker 1.0
+import "FlightTrackerUtils.js" as Utils
 
 ApplicationWindow {
     id: root
@@ -13,7 +14,7 @@ ApplicationWindow {
     height: width
     title: qsTr("Flight Tracker")
 
-    header: AppToolBar { id: toolBar }
+    header: AppToolBar { }
 
     Map {
         id: map
@@ -24,15 +25,8 @@ ApplicationWindow {
         minimumZoomLevel: 5
         zoomLevel: 7
 
-        Connections {
-            target: toolBar
-            onSamAdded: {
-                var params = { "coordinate": map.center };
-                var component = Qt.createComponent("GeoSam.qml");
-                var geoSam = component.createObject(map, params);
-                map.addMapItem(geoSam);
-                samRegistry.registerSamPosition(map.center);
-            }
+        Component.onCompleted: {
+            Utils.initSam(map);
         }
     }
 }

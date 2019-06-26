@@ -14,7 +14,7 @@ MapQuickItem {
         height: width
     }
 
-    readonly property point position: Qt.point(x + width, y + width)
+    readonly property point position: Qt.point(x + width/2, y + width/2)
 
     MouseArea {
         anchors.fill: parent
@@ -22,13 +22,7 @@ MapQuickItem {
 
         onReleased: {
             var coordinate = map.toCoordinate(position, false);
-            console.log(coordinate);
-//            flightRegistry.finalizeFlightUpdate(index, coordinate);
-//            internal.isMoving = false;
+            samRegistry.setSamPosition(coordinate);
         }
-
-//        onPressed: {
-//            internal.isMoving = true;
-//        }
     }
 }

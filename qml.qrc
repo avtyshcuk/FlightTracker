@@ -6,5 +6,6 @@
         <file>main.cpp</file>
         <file>qtquickcontrols2.conf</file>
         <file>GeoSam.qml</file>
+        <file>FlightTrackerUtils.js</file>
     </qresource>
 </RCC>

@@ -20,12 +20,11 @@ ToolBar {
             id: fileRow
 
             ToolButton {
-                id: addSamButton
-                text: internal.addSamIcon
+                id: startStopButton
+                text: internal.startStopIcon
                 font.family: myCustomFont.name
-                visible: !samRegistry.isSamRegistered
                 onClicked: {
-                    samAdded();
+
                 }
             }
         }
@@ -34,6 +33,6 @@ ToolBar {
     QtObject {
         id: internal
 
-        readonly property string addSamIcon: "\uE807"
+        readonly property string startStopIcon: "\uE807"
     }
 }

@@ -29,13 +29,17 @@ ApplicationWindow {
         BeamPositionItem {
             anchors.fill: parent
             visible: beamSimulator.isActive
-
-            property var samPos: samRegistry.samPosition
-            // Assume our radar has 250 km detection range
-            property var beamPos: samPos.atDistanceAndAzimuth(250000, beamSimulator.angle)
-
+            property var samPos: beamSimulator.isActive ? samRegistry.samPosition : QtPositioning.coordinate()
+            property var beamPos: samPos.atDistanceAndAzimuth(beamSimulator.distance, beamSimulator.angle)
             startPoint: map.fromCoordinate(samPos, false)
             endPoint: map.fromCoordinate(beamPos, false)
+        }
+
+        Connections {
+            target: pointsReciever
+            onPointReceived: {
+                Utils.addPoint(map, point);
+            }
         }
 
         Component.onCompleted: {

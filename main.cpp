@@ -7,6 +7,7 @@
 #include "beampositionitem.h"
 #include "beamsimulator.h"
 #include "pointsreceiver.h"
+#include "trackregistry.h"
 
 int main(int argc, char *argv[])
 {
@@ -28,7 +29,12 @@ int main(int argc, char *argv[])
     rootContext->setContextProperty("beamSimulator", &beamSimulator);
 
     PointsReceiver pointsReceiver;
+    pointsReceiver.setSamRegistry(&samRegistry);
     rootContext->setContextProperty("pointsReciever", &pointsReceiver);
+
+    TrackRegistry trackRegistry;
+    trackRegistry.setBeamSimulator(&beamSimulator);
+    trackRegistry.setPointsReceiver(&pointsReceiver);
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty())

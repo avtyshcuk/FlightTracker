@@ -4,15 +4,22 @@
 #include <QUdpSocket>
 #include <QGeoCoordinate>
 
+class SamRegistry;
+
 class PointsReceiver : public QUdpSocket
 {
     Q_OBJECT
 public:
     explicit PointsReceiver(QObject *parent = nullptr);
 
-signals:
-    void pointReceived(const QGeoCoordinate &point);
+    void setSamRegistry(SamRegistry *samRegistry) { mSamRegistry = samRegistry; }
 
+signals:
+    void geoPointReceived(const QGeoCoordinate &point);
+    void pointReceived(qreal distance, qreal azimuth);
+
+private:
+    SamRegistry *mSamRegistry;
 };
 
 #endif // POINTSRECEIVER_H

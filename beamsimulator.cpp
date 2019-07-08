@@ -15,6 +15,7 @@ BeamSimulator::BeamSimulator(QObject *parent)
             mAngle += mTimer.interval() * beamSpeed;
         } else {
             mAngle = 0.0;
+            emit cycleStarted();
         }
         emit angleChanged();
 

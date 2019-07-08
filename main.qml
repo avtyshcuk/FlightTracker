@@ -37,7 +37,7 @@ ApplicationWindow {
 
         Connections {
             target: pointsReciever
-            onPointReceived: {
+            onGeoPointReceived: {
                 Utils.addPoint(map, point);
             }
         }

@@ -2,6 +2,8 @@
 
 #include <QNetworkDatagram>
 
+#include "samregistry.h"
+
 PointsReceiver::PointsReceiver(QObject *parent)
     : QUdpSocket(parent)
 {
@@ -11,11 +13,15 @@ PointsReceiver::PointsReceiver(QObject *parent)
             auto datagram = receiveDatagram();
             auto dataString = QString::fromUtf8(datagram.data());
             auto dataList = dataString.split(',');
-            auto latitude = dataList.at(0).toDouble();
-            auto longitude = dataList.at(1).toDouble();
+            auto distance = dataList.at(0).toDouble();
+            auto azimuth = dataList.at(1).toDouble();
 
-            emit pointReceived(QGeoCoordinate(latitude, longitude));
-            qDebug() << datagram.data();
+            emit pointReceived(distance, azimuth);
+
+            const QGeoCoordinate &samPosition = mSamRegistry->samPosition();
+            const QGeoCoordinate point = samPosition.atDistanceAndAzimuth(distance, azimuth);
+
+            emit geoPointReceived(point);
         }
     });
 }

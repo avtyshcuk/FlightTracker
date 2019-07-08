@@ -26,6 +26,7 @@ public:
 signals:
     void isActiveChanged();
     void angleChanged();
+    void cycleStarted();
 
 private:
     QByteArray createDatagram(qreal angle);

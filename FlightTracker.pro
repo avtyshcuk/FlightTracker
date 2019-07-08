@@ -18,7 +18,9 @@ SOURCES += \
     samregistry.cpp \
     beampositionitem.cpp \
     beamsimulator.cpp \
-    pointsreceiver.cpp
+    pointsreceiver.cpp \
+    trackregistry.cpp \
+    track.cpp
 
 RESOURCES += qml.qrc
 
@@ -38,4 +40,6 @@ HEADERS += \
     samregistry.h \
     beampositionitem.h \
     beamsimulator.h \
-    pointsreceiver.h
+    pointsreceiver.h \
+    trackregistry.h \
+    track.h

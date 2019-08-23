@@ -1,7 +1,6 @@
 #include "pointsreceiver.h"
 
 #include <QNetworkDatagram>
-
 #include "samregistry.h"
 
 PointsReceiver::PointsReceiver(QObject *parent)
@@ -17,11 +16,6 @@ PointsReceiver::PointsReceiver(QObject *parent)
             auto azimuth = dataList.at(1).toDouble();
 
             emit pointReceived(distance, azimuth);
-
-            const QGeoCoordinate &samPosition = mSamRegistry->samPosition();
-            const QGeoCoordinate point = samPosition.atDistanceAndAzimuth(distance, azimuth);
-
-            emit geoPointReceived(point);
         }
     });
 }

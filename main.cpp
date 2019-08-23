@@ -4,6 +4,7 @@
 
 #include "samregistry.h"
 #include "samitem.h"
+#include "airplane.h"
 #include "beampositionitem.h"
 #include "beamsimulator.h"
 #include "pointsreceiver.h"
@@ -17,6 +18,7 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<SamItem>("Tracker", 1, 0, "SamItem");
     qmlRegisterType<BeamPositionItem>("Tracker", 1, 0, "BeamPositionItem");
+    qmlRegisterType<AirPlane>("Tracker", 1, 0, "AirPlane");
 
     QQmlApplicationEngine engine;
     QQmlContext *rootContext = engine.rootContext();
@@ -35,6 +37,8 @@ int main(int argc, char *argv[])
     TrackRegistry trackRegistry;
     trackRegistry.setBeamSimulator(&beamSimulator);
     trackRegistry.setPointsReceiver(&pointsReceiver);
+    trackRegistry.setSamRegistry(&samRegistry);
+    rootContext->setContextProperty("trackRegistry", &trackRegistry);
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty())

@@ -1,14 +1,13 @@
 #include "beamsimulator.h"
 
 #include <QString>
-
 #include "samregistry.h"
 
 BeamSimulator::BeamSimulator(QObject *parent)
     : QObject(parent)
     , mUdpSocket(new QUdpSocket(parent))
 {
-    constexpr qreal beamSpeed = 360.0 / 10000.0;
+    constexpr qreal beamSpeed = 360.0 / mCycleTime;
     QObject::connect(&mTimer, &QTimer::timeout, [this]{
 
         if (mAngle < 360.0) {

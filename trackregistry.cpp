@@ -2,10 +2,12 @@
 
 #include "beamsimulator.h"
 #include "pointsreceiver.h"
+#include "samregistry.h"
 
 #include <QDebug>
 #include <QtMath>
 #include <QPointF>
+#include <QTimer>
 
 TrackRegistry::TrackRegistry(QObject *parent)
     : QObject(parent)
@@ -17,10 +19,10 @@ void TrackRegistry::setBeamSimulator(BeamSimulator *beamSimulator)
 {
     mBeamSimulator = beamSimulator;
 
-    connect(mBeamSimulator, &BeamSimulator::cycleStarted, [this]{
-        qDebug() << "Cycle started";
-        for (const auto &track : mTracks) {
-            qDebug() << track.points();
+    connect(mBeamSimulator, &BeamSimulator::isActiveChanged, [this]{
+        if (!mBeamSimulator->isActive()) {
+            mTracks.clear();
+            emit clearAll();
         }
     });
 }
@@ -28,16 +30,51 @@ void TrackRegistry::setBeamSimulator(BeamSimulator *beamSimulator)
 void TrackRegistry::setPointsReceiver(PointsReceiver *pointsReceiver)
 {
     mPointsReceiver = pointsReceiver;
+
     connect(mPointsReceiver, &PointsReceiver::pointReceived,
             [this](qreal distance, qreal azimuth){
+
         const auto point = toPlaneCoordinate(distance, azimuth);
-        for (auto &track : mTracks) {
-            if (track.hasPoint(point)) {
-                track.addPoint(point);
+        auto it = mTracks.begin();
+        while (it != mTracks.end()) {
+            if (it->hasPoint(point)) {
+
+                it->addPoint(point);
+                if (it->isValid()) {
+                    notifyTrackChange(it.key(), *it);
+                }
+                triggerExtrapolation(it.key(), *it);
                 return;
             }
+            ++it;
         }
         mTracks[freeTrackId()] = Track(point);
+    });
+}
+
+void TrackRegistry::notifyTrackChange(int id, const Track &track)
+{
+    const auto position = toGeoCoordinate(track.points().last());
+    const auto azimuth = qRadiansToDegrees(track.azimuth());
+    emit trackChanged(id, QVariant::fromValue(position), azimuth);
+}
+
+void TrackRegistry::triggerExtrapolation(int id, Track &track)
+{
+    // We wait some time for data and extrapolate based on prediction
+    const auto cycleTime = mBeamSimulator->cycleTime();
+    QTimer::singleShot(cycleTime + mWaitTime, this, [this, id, &track, cycleTime]{
+        if (track.isValid() && track.isOutdated(cycleTime)) {
+            track.update(QPointF{ });
+            notifyTrackChange(id, track);
+
+            if (track.isFinished()) {
+                mTracks.remove(id);
+                emit clearTrack(id);
+                return;
+            }
+            triggerExtrapolation(id, track);
+        }
     });
 }
 
@@ -45,6 +82,15 @@ QPointF TrackRegistry::toPlaneCoordinate(qreal distance, qreal azimuth)
 {
     const auto azimuthRadians = qDegreesToRadians(azimuth);
     return QPointF(distance * qSin(azimuthRadians), distance * qCos(azimuthRadians));
+}
+
+QGeoCoordinate TrackRegistry::toGeoCoordinate(const QPointF &point)
+{
+    auto distance = qSqrt(point.x()*point.x() + point.y()*point.y());
+    auto radianAngle = qAtan2(point.x(), point.y());
+    auto azimuth = qRadiansToDegrees(radianAngle < 0 ? radianAngle + 2*M_PI : radianAngle);
+
+    return mSamRegistry->samPosition().atDistanceAndAzimuth(distance, azimuth);
 }
 
 int TrackRegistry::freeTrackId()

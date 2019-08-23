@@ -8,5 +8,6 @@
         <file>GeoSam.qml</file>
         <file>FlightTrackerUtils.js</file>
         <file>GeoPoint.qml</file>
+        <file>GeoAirPlane.qml</file>
     </qresource>
 </RCC>

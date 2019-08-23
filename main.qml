@@ -36,9 +36,15 @@ ApplicationWindow {
         }
 
         Connections {
-            target: pointsReciever
-            onGeoPointReceived: {
-                Utils.addPoint(map, point);
+            target: trackRegistry
+            onTrackChanged: {
+                Utils.updateFlightTracks(id, geoPoint, azimuth);
+            }
+            onClearAll: {
+                Utils.clearAll();
+            }
+            onClearTrack: {
+                Utils.clearTrack(id);
             }
         }
 

@@ -20,7 +20,8 @@ SOURCES += \
     beamsimulator.cpp \
     pointsreceiver.cpp \
     trackregistry.cpp \
-    track.cpp
+    track.cpp \
+    airplane.cpp
 
 RESOURCES += qml.qrc
 
@@ -42,4 +43,5 @@ HEADERS += \
     beamsimulator.h \
     pointsreceiver.h \
     trackregistry.h \
-    track.h
+    track.h \
+    airplane.h

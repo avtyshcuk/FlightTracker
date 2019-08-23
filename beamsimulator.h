@@ -22,6 +22,8 @@ public:
     Q_INVOKABLE void stop();
 
     void setSamRegistry(SamRegistry *samRegistry) { mSamRegistry = samRegistry; }
+    bool isActive() const { return mIsActive; }
+    int cycleTime() const { return mCycleTime; }
 
 signals:
     void isActiveChanged();
@@ -34,7 +36,8 @@ private:
 private:
     bool mIsActive = false;
     qreal mAngle = 0.0;
-    const qreal mDistance = 250000.0;
+    static constexpr qreal mDistance = 250000.0;
+    static constexpr int mCycleTime = 10000.0;
     SamRegistry *mSamRegistry;
     QTimer mTimer;
     QUdpSocket *mUdpSocket;

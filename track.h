@@ -17,6 +17,7 @@ public:
     bool isValid() const { return mPoints.size() > MIN_POINT_COUNT; }
     bool isOutdated(int cycleTyme) const;
     bool isFinished() { return mExtrapolationCount > mMaxWindowSize; }
+    void predict();
     void update(const QPointF &point);
 
 private:

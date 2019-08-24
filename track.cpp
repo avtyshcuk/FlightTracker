@@ -3,8 +3,6 @@
 #include <QtMath>
 #include <QDateTime>
 
-#include <QDebug>
-
 Track::Track(const QPointF &firstPoint)
 {
     mPoints << firstPoint;
@@ -14,13 +12,14 @@ void Track::addPoint(const QPointF &point)
 {
     mLastUpdateTime = QDateTime::currentMSecsSinceEpoch();
 
-    if (mPoints.size() < MIN_POINT_COUNT) {
+    if (mPoints.size() == 1) {
         mPoints << point;
-        mPredictedPoint = point;
+        predict();
         return;
     }
 
     update(point);
+    predict();
 }
 
 bool Track::hasPoint(const QPointF &point)
@@ -34,7 +33,7 @@ bool Track::isOutdated(int cycleTyme) const
     return QDateTime::currentMSecsSinceEpoch() - mLastUpdateTime > cycleTyme;
 }
 
-void Track::update(const QPointF &point)
+void Track::predict()
 {
     int j = mMaxWindowSize;
     qreal vX = 0.0, vY = 0.0;
@@ -46,9 +45,12 @@ void Track::update(const QPointF &point)
     }
 
     const int windowSize = mMaxWindowSize - j;
-    mPredictedPoint.rx() += vX / windowSize * mBeamCycle;
-    mPredictedPoint.ry() += vY / windowSize * mBeamCycle;
+    mPredictedPoint.rx() = mPoints.last().x() + vX / windowSize * mBeamCycle;
+    mPredictedPoint.ry() = mPoints.last().y() + vY / windowSize * mBeamCycle;
+}
 
+void Track::update(const QPointF &point)
+{
     const auto previousPoint = mPoints.last();
     if (point.isNull()) {
         mPoints << mPredictedPoint;
@@ -58,4 +60,6 @@ void Track::update(const QPointF &point)
         mExtrapolationCount = 0;
     }
     mAzimuth = qAtan2(mPoints.last().x() - previousPoint.x(), mPoints.last().y() - previousPoint.y());
+
+    predict();
 }

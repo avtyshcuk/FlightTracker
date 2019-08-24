@@ -4,7 +4,6 @@
 #include "pointsreceiver.h"
 #include "samregistry.h"
 
-#include <QDebug>
 #include <QtMath>
 #include <QPointF>
 #include <QTimer>
@@ -64,17 +63,26 @@ void TrackRegistry::triggerExtrapolation(int id, Track &track)
     // We wait some time for data and extrapolate based on prediction
     const auto cycleTime = mBeamSimulator->cycleTime();
     QTimer::singleShot(cycleTime + mWaitTime, this, [this, id, &track, cycleTime]{
-        if (track.isValid() && track.isOutdated(cycleTime)) {
-            track.update(QPointF{ });
-            notifyTrackChange(id, track);
-
-            if (track.isFinished()) {
-                mTracks.remove(id);
-                emit clearTrack(id);
-                return;
-            }
-            triggerExtrapolation(id, track);
+        if (!mBeamSimulator->isActive()) {
+            return;
         }
+        if (!track.isOutdated(cycleTime)) {
+            return;
+        }
+        if (!track.isValid()) {
+            mTracks.remove(id);
+            return;
+        }
+
+        track.update(QPointF{ });
+        notifyTrackChange(id, track);
+
+        if (track.isFinished()) {
+            mTracks.remove(id);
+            emit clearTrack(id);
+            return;
+        }
+        triggerExtrapolation(id, track);
     });
 }
 
